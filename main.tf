@@ -53,7 +53,7 @@ resource "null_resource" "helm_init_oci" {
 
 
   provisioner "local-exec" {
-    command = "echo \"$HELM_CREDS_PASSWORD\" | helm registry login ${var.helm_repo} --username $HELM_CREDS_USER --password-stdin"
+    command = "aws ecr get-login-password | helm registry login ${var.helm_repo} --username AWS --password-stdin"
   }
 
   provisioner "local-exec" {
