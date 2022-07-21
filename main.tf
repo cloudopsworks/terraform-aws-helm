@@ -28,8 +28,8 @@ resource "helm_release" "app_release" {
   version    = var.chart_version
   wait       = false
 
-  values = [ for item in local.all_values : 
-    file(item) ]
+  values = [for item in local.all_values :
+  file(item)]
 
   dynamic "set_sensitive" {
     for_each = var.vars
@@ -53,7 +53,7 @@ resource "null_resource" "helm_init_oci" {
 
 
   provisioner "local-exec" {
-    command = "aws ecr get-login-password | helm registry login ${var.helm_repo} --username AWS --password-stdin"
+    command = "echo \"${var.helm_password}\" | helm registry login ${var.helm_repo} --username ${var.helm_user} --password-stdin"
   }
 
   provisioner "local-exec" {

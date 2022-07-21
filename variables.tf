@@ -47,3 +47,13 @@ variable "var_files" {
   type    = list(string)
   default = []
 }
+
+variable "helm_user" {
+  type    = string
+  default = ""
+}
+
+variable "helm_password" {
+  type    = string
+  default = ""
+}
