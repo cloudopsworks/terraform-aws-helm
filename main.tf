@@ -41,35 +41,36 @@ resource "helm_release" "app_release" {
     }
   }
 }
-
-resource "null_resource" "helm_init_oci" {
-  count = var.oci_repo ? 1 : 0
-
-  triggers = {
-    always_run = local.values_file_sha1
-    on_version = var.chart_version
-    on_vars    = local.vars_values_sha1
-  }
-
-
-  provisioner "local-exec" {
-    command = "echo \"${var.helm_password}\" | helm registry login ${var.helm_repo} --username ${var.helm_user} --password-stdin"
-  }
-
-  provisioner "local-exec" {
-    command = "helm pull oci://${var.helm_repo}/${var.chart_name} --version ${var.chart_version} --destination ./.release --untar --untardir ${var.release_name}"
-  }
-
-}
+#
+#resource "null_resource" "helm_init_oci" {
+#  count = var.oci_repo ? 1 : 0
+#
+#  triggers = {
+#    always_run = local.values_file_sha1
+#    on_version = var.chart_version
+#    on_vars    = local.vars_values_sha1
+#  }
+#
+#
+#  provisioner "local-exec" {
+#    command = "echo \"${var.helm_password}\" | helm registry login ${var.helm_repo} --username ${var.helm_user} --password-stdin"
+#  }
+#
+#  provisioner "local-exec" {
+#    command = "helm pull oci://${var.helm_repo}/${var.chart_name} --version ${var.chart_version} --destination ./.release --untar --untardir ${var.release_name}"
+#  }
+#
+#}
 
 resource "helm_release" "app_release_oci" {
-  depends_on = [
-    null_resource.helm_init_oci
-  ]
+#  depends_on = [
+#    null_resource.helm_init_oci
+#  ]
 
   count     = var.oci_repo ? 1 : 0
   name      = var.release_name
-  chart     = "./.release/${var.release_name}/${var.chart_name}/"
+  chart     = var.chart_name
+  repository = "oci://${var.helm_repo}/"
   namespace = data.kubernetes_namespace.release_ns.metadata.0.name
   version   = var.chart_version
   wait      = false
